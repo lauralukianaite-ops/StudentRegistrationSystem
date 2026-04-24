@@ -3,6 +3,7 @@ package org.example.studentregistrationsystem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -26,6 +27,10 @@ public class HelloController {
     @FXML private TextField txtEmail;
     @FXML private TextField txtGroup;
 
+    @FXML private Button buttonSaveUpdate;
+    @FXML private Button buttonAddStudent;
+
+    private Student selectedStudent;
 
     private ObservableList<Student> studentList = FXCollections.observableArrayList();
 
@@ -59,6 +64,42 @@ public class HelloController {
         paneAttendance.setVisible(false);
         paneReports.setVisible(false);
         paneImportExport.setVisible(false);
+    }
+
+    @FXML
+    void onTableClick() {
+        selectedStudent = tableStudent.getSelectionModel().getSelectedItem();
+
+        if (selectedStudent != null) {
+            txtName.setText(selectedStudent.getName());
+            txtEmail.setText(selectedStudent.getEmail());
+            txtGroup.setText(selectedStudent.getGroup());
+
+            buttonAddStudent.setVisible(false);
+            buttonSaveUpdate.setVisible(true);
+        }
+    }
+
+    @FXML
+    void onSaveUpdateClick() {
+        if (selectedStudent != null) {
+            int index = studentList.indexOf(selectedStudent);
+            Student updatedStudent = new Student(txtName.getText(), txtEmail.getText(), txtGroup.getText(), selectedStudent.getAttendanceRate());
+
+            studentList.set(index, updatedStudent);
+
+            clearFields();
+        }
+    }
+
+    private void clearFields() {
+        txtName.clear();
+        txtEmail.clear();
+        txtGroup.clear();
+        buttonAddStudent.setVisible(true);
+        buttonSaveUpdate.setVisible(false);
+        selectedStudent = null;
+        tableStudent.getSelectionModel().clearSelection();
     }
 
     @FXML void onReviewClick() { hideAllPanes(); paneReview.setVisible(true); }

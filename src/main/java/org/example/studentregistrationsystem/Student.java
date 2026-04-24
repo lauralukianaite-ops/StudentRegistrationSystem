@@ -18,14 +18,14 @@ public class Student {
     }
 
     public String getEmail() {
-        return name;
+        return email;
     }
 
     public String getGroup() {
-        return name;
+        return group;
     }
 
     public String getAttendanceRate() {
-        return name;
+        return attendanceRate;
     }
 }
