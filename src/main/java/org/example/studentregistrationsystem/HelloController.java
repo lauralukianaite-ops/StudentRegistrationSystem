@@ -46,6 +46,7 @@ public class HelloController {
     private String selectedGroupName;
 
     @FXML private TableColumn<Student, Boolean> colAttendanceCheck;
+    @FXML private TableColumn<Student, String> colAttendanceEmail;
     @FXML private TableColumn<Student, String> colAttendanceName;
     @FXML private TableView<Student> tableAttendance;
     @FXML private ComboBox<String> comboAttendanceGroup;
@@ -114,6 +115,11 @@ public class HelloController {
             if (colAttendanceName != null) {
                 colAttendanceName.setCellValueFactory(new PropertyValueFactory<>("name"));
             }
+
+            if (colAttendanceEmail != null) {
+                colAttendanceEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+            }
+
             if (colAttendanceCheck != null) {
                 colAttendanceCheck.setCellValueFactory(cellData -> new javafx.beans.property.SimpleBooleanProperty(false));
                 colAttendanceCheck.setCellFactory(javafx.scene.control.cell.CheckBoxTableCell.forTableColumn(colAttendanceCheck));
