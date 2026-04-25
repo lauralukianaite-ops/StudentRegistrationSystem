@@ -52,6 +52,9 @@ public class HelloController {
     @FXML private ComboBox<String> comboAttendanceGroup;
     @FXML private DatePicker datePicker;
 
+    @FXML private Button buttonRemoveFromGroup;
+    @FXML private Label labelRemoveFromGroup;
+
     @FXML
     public void initialize() {
         colName.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -124,6 +127,18 @@ public class HelloController {
                 colAttendanceCheck.setCellValueFactory(cellData -> new javafx.beans.property.SimpleBooleanProperty(false));
                 colAttendanceCheck.setCellFactory(javafx.scene.control.cell.CheckBoxTableCell.forTableColumn(colAttendanceCheck));
             }
+        }
+
+        if (tableGroupMembers != null && buttonRemoveFromGroup != null) {
+            tableGroupMembers.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null) {
+                    buttonRemoveFromGroup.setVisible(true);
+                    labelRemoveFromGroup.setVisible(true);
+                } else {
+                    labelRemoveFromGroup.setVisible(false);
+                    buttonRemoveFromGroup.setVisible(false);
+                }
+            });
         }
     }
 
@@ -200,7 +215,11 @@ public class HelloController {
 
     @FXML
     void onRemoveFromGroupClick() {
-        System.out.println("Bandoma pašalinti studentą iš grupės...");
+        Student selectedMember = tableGroupMembers.getSelectionModel().getSelectedItem();
+        selectedMember.setGroup(null);
+        refreshGroups();
+        updateMembersTable(tableGroups.getSelectionModel().getSelectedItem());
+        tableStudent.refresh();
     }
 
     private void refreshGroupMembers() {
