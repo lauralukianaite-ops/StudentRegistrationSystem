@@ -34,6 +34,12 @@ public class HelloController {
 
     private ObservableList<Student> studentList = FXCollections.observableArrayList();
 
+    @FXML private TableView<String> tableGroups;
+    @FXML private TableColumn<String, String> colGroupName;
+    @FXML private TextField txtNewGroupName;
+
+    private ObservableList<String> groupList = FXCollections.observableArrayList();
+
     @FXML
     public void initialize() {
         colName.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -44,6 +50,9 @@ public class HelloController {
         studentList.add(new Student("Pavyzdys Pavyzdinis", "pavyzdys@stud.lt", "GR-1", "0%"));
 
         tableStudent.setItems(studentList);
+
+        colGroupName.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue()));
+        tableGroups.setItems(groupList);
     }
 
     @FXML
@@ -100,6 +109,26 @@ public class HelloController {
         buttonSaveUpdate.setVisible(false);
         selectedStudent = null;
         tableStudent.getSelectionModel().clearSelection();
+    }
+
+    @FXML
+    void onAddGroupClick() {
+        String name = txtNewGroupName.getText().trim();
+
+        if (!name.isEmpty()) {
+            if (!groupList.contains(name)) {
+                groupList.add(name);
+                txtNewGroupName.clear();
+                System.out.println("Grupė pridėta: " + name);
+            } else {
+                System.out.println("Tokia grupė jau egzistuoja!");
+            }
+        }
+    }
+
+    @FXML
+    void onRemoveFromGroupClick() {
+        System.out.println("Bandoma pašalinti studentą iš grupės...");
     }
 
     @FXML void onReviewClick() { hideAllPanes(); paneReview.setVisible(true); }
