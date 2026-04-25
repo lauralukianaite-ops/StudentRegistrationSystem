@@ -2,12 +2,12 @@ package org.example.studentregistrationsystem;
 
 public class Student extends Person{
     private String group;
-    private String attendanceRate;
+    private int attendedLectures = 0;
+    private int totalLectures = 0;
 
-    public Student(String name, String email, String group, String attendanceRate) {
+    public Student(String name, String email, String group) {
         super(name,email);
         this.group = group;
-        this.attendanceRate = attendanceRate;
     }
 
     @Override
@@ -22,10 +22,14 @@ public class Student extends Person{
         this.group = group;
     }
 
-    public String getAttendanceRate() {
-        return attendanceRate;
+    public String getAttendanceRate(){
+        if (totalLectures == 0) return "0%";
+        int percent = (int)(((double)attendedLectures/totalLectures)*100);
+        return percent + "%";
     }
-    public void setAttendanceRate(String attendanceRate){
-        this.attendanceRate = attendanceRate;
+
+    public void addAttendance(boolean wasPresent){
+        this.totalLectures++;
+        if (wasPresent) this.attendedLectures++;
     }
 }

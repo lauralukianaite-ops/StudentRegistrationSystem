@@ -1,0 +1,65 @@
+/* Pagrindinis lentelės stilius */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: #959595;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.titled-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: #959595;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+/* Stulpelių viršūnių (header) stilius */
+.table-view .column-header {
+    -fx-size: 35;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #423f3f;
+    -fx-font-weight: bold;
+}
+
+
+/* Spalva, kai užvedama pelė (hover) */
+.table-row-cell:hover {
+    -fx-background-color: #6a6969;
+}
+
+/* Spalva, kai eilutė pasirenkama (selected) */
+.table-row-cell:selected {
+    -fx-background-color: #6a6969;
+}
+
+/* Mygtukų stilius, kad derėtų prie tamsaus dizaino */
+.button {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #ffffff;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+
+.button:hover {
+    -fx-background-color: #474949;
+}
+
+/* Paslepia skirtuko (divider) foną */
+.split-pane .split-pane-divider {
+    -fx-background-color: transparent;
+    -fx-padding: 0 1 0 1; /* Nustato skirtuko plotį (čia 2px) */
+}
+
+/* Jei nori, kad skirtukas būtų visiškai nematomas (0 taškų) */
+.split-pane {
+    -fx-background-color: transparent;
+    -fx-box-decoration-break: clone;
+}
+
+/* Paslepia mažą taškelį/rankenėlę, kuri kartais būna viduryje */
+.split-pane .split-pane-divider:hover {
+    -fx-background-color: #4b6eaf; /* Parodo spalvą tik užvedus pelę, kad žinotum kur tempti */
+}

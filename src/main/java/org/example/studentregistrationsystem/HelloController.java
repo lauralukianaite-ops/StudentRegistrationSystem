@@ -45,6 +45,12 @@ public class HelloController {
 
     private String selectedGroupName;
 
+    @FXML private TableColumn<Student, Boolean> colAttendanceCheck;
+    @FXML private TableColumn<Student, String> colAttendanceName;
+    @FXML private TableView<Student> tableAttendance;
+    @FXML private ComboBox<String> comboAttendanceGroup;
+    @FXML private DatePicker datePicker;
+
     @FXML
     public void initialize() {
         colName.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -52,7 +58,13 @@ public class HelloController {
         colGroup.setCellValueFactory(new PropertyValueFactory<>("group"));
         colAttendance.setCellValueFactory(new PropertyValueFactory<>("attendanceRate"));
 
-        studentList.add(new Student("Pavyzdys Pavyzdinis", "pavyzdys@stud.lt", "GR-1", "0%"));
+        studentList.add(new Student("Pavyzdys Pavyzdinis", "pavyzdys@stud.lt", "GR-1"));
+        studentList.add(new Student("Pavyzdė Pavyzdienytė", "pavyzdyspavpav@stud.lt", "GR-2"));
+        studentList.add(new Student("Pavyzdauskas Pavyzda", "pavyzdys@stud.lt", "GR-2"));
+        studentList.add(new Student("Pavyzdyninis Pavyzdininininininis", "mmmmm@stud.lt", "GR-3"));
+        studentList.add(new Student("Pavydinininininininins Pavyzdys", "lalla@stud.lt", "GR-1"));
+        studentList.add(new Student("Vardis Bepavardis", "vardas@stud.lt", "GR-1"));
+        studentList.add(new Student("Pavardis Vardis", "wwww@stud.lt", "GR-1"));
 
         tableStudent.setItems(studentList);
 
@@ -88,13 +100,32 @@ public class HelloController {
 
         colMemberName.setCellValueFactory(new PropertyValueFactory<>("name"));
         colMemberEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+
+        tableAttendance.setEditable(true);
+        colAttendanceCheck.setCellValueFactory(cellData -> {
+            return new javafx.beans.property.SimpleBooleanProperty(false);
+        });
+
+        colAttendanceCheck.setCellFactory(javafx.scene.control.cell.CheckBoxTableCell.forTableColumn(colAttendanceCheck));
+
+        if (tableAttendance != null) {
+            tableAttendance.setEditable(true);
+
+            if (colAttendanceName != null) {
+                colAttendanceName.setCellValueFactory(new PropertyValueFactory<>("name"));
+            }
+            if (colAttendanceCheck != null) {
+                colAttendanceCheck.setCellValueFactory(cellData -> new javafx.beans.property.SimpleBooleanProperty(false));
+                colAttendanceCheck.setCellFactory(javafx.scene.control.cell.CheckBoxTableCell.forTableColumn(colAttendanceCheck));
+            }
+        }
     }
 
     @FXML
     void onAddStudentClick() {
         if (txtName.getText().isEmpty() || txtEmail.getText().isEmpty()) return;
 
-        studentList.add(new Student(txtName.getText(), txtEmail.getText(), txtGroup.getText(), "0%"));
+        studentList.add(new Student(txtName.getText(), txtEmail.getText(), txtGroup.getText()));
 
         txtName.clear();
         txtEmail.clear();
@@ -128,7 +159,7 @@ public class HelloController {
     void onSaveUpdateClick() {
         if (selectedStudent != null) {
             int index = studentList.indexOf(selectedStudent);
-            Student updatedStudent = new Student(txtName.getText(), txtEmail.getText(), txtGroup.getText(), selectedStudent.getAttendanceRate());
+            Student updatedStudent = new Student(txtName.getText(), txtEmail.getText(), txtGroup.getText());
 
             studentList.set(index, updatedStudent);
 
@@ -209,10 +240,34 @@ public class HelloController {
         System.out.println("Ieškoma grupės: [" + groupName + "], Rasta: " + filteredList.size());
     }
 
+    @FXML
+    void onAttendanceGroupSelected() {
+        String selectedGroup = comboAttendanceGroup.getValue();
+        if (selectedGroup != null) {
+            ObservableList<Student> groupMembers = studentList.filtered(s ->
+                    s.getGroup() != null && s.getGroup().equals(selectedGroup));
+            tableAttendance.setItems(groupMembers);
+        }
+    }
+
+    @FXML
+    void onSaveAttendanceClick() {
+        if (datePicker.getValue() == null) {
+            System.out.println("Pirmiausia pasirinkite datą!");
+            return;
+        }
+        for (Student s : tableAttendance.getItems()) {
+            s.addAttendance(true);
+        }
+
+        tableStudent.refresh();
+        tableAttendance.refresh();
+    }
+
     @FXML void onReviewClick() { hideAllPanes(); paneReview.setVisible(true); }
     @FXML void onStudentClick() { hideAllPanes(); paneStudent.setVisible(true); }
     @FXML void onGroupsClick() { hideAllPanes(); paneGroups.setVisible(true); refreshGroups(); }
-    @FXML void onAttendanceClick() { hideAllPanes(); paneAttendance.setVisible(true); }
+    @FXML void onAttendanceClick() { hideAllPanes(); paneAttendance.setVisible(true); refreshGroups(); comboAttendanceGroup.setItems(groupList);}
     @FXML void onReportsClick() { hideAllPanes(); paneReports.setVisible(true); }
     @FXML void onImportExportClick() { hideAllPanes(); paneImportExport.setVisible(true); }
 }
