@@ -3,10 +3,7 @@ package org.example.studentregistrationsystem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 
@@ -36,9 +33,17 @@ public class HelloController {
 
     @FXML private TableView<String> tableGroups;
     @FXML private TableColumn<String, String> colGroupName;
+    @FXML private TableColumn<String, String> colGroupCount;
     @FXML private TextField txtNewGroupName;
+    @FXML private TableColumn<Student, String> colMemberName;
+    @FXML private TableColumn<Student, String> colMemberEmail;
 
     private ObservableList<String> groupList = FXCollections.observableArrayList();
+
+    @FXML private ComboBox<Student> comboAvailableStudents;
+    @FXML private TableView<Student> tableGroupMembers;
+
+    private String selectedGroupName;
 
     @FXML
     public void initialize() {
@@ -53,6 +58,36 @@ public class HelloController {
 
         colGroupName.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue()));
         tableGroups.setItems(groupList);
+
+        tableGroups.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                selectedGroupName = newSelection;
+                updateMembersTable(newSelection);
+            }
+        });
+
+        colGroupCount.setCellValueFactory(data -> {
+            String groupName = data.getValue();
+
+            long count = studentList.stream()
+                    .filter(s -> s.getGroup() != null && s.getGroup().equals(groupName))
+                    .count();
+
+            return new javafx.beans.property.SimpleStringProperty(String.valueOf(count));
+        });
+
+        tableGroups.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                selectedGroupName = newSelection;
+                updateMembersTable(newSelection);
+
+                ObservableList<Student> freeStudents = studentList.filtered(s -> s.getGroup() == null || s.getGroup().isEmpty());
+                comboAvailableStudents.setItems(freeStudents);
+            }
+        });
+
+        colMemberName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        colMemberEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
     }
 
     @FXML
@@ -131,9 +166,52 @@ public class HelloController {
         System.out.println("Bandoma pašalinti studentą iš grupės...");
     }
 
+    private void refreshGroupMembers() {
+        ObservableList<Student> members = studentList.filtered(s -> s.getGroup().equals(selectedGroupName));
+        tableGroupMembers.setItems(members);
+
+        ObservableList<Student> freeStudents = studentList.filtered(s -> s.getGroup() == null || s.getGroup().isEmpty());
+        comboAvailableStudents.setItems(freeStudents);
+    }
+
+    @FXML
+    void onAssignStudentClick() {
+        Student studentToAssign = comboAvailableStudents.getSelectionModel().getSelectedItem();
+
+        if (studentToAssign != null && selectedGroupName != null) {
+            studentToAssign.setGroup(selectedGroupName);
+
+            refreshGroupMembers();
+            tableStudent.refresh();
+        }
+    }
+
+    private void refreshGroups() {
+        groupList.clear();
+
+        for (Student s : studentList) {
+            String gName = s.getGroup();
+            if (gName != null && !gName.isEmpty() && !groupList.contains(gName)) {
+                groupList.add(gName);
+            }
+        }
+    }
+
+    private void updateMembersTable(String groupName) {
+        if (groupName == null) return;
+
+        ObservableList<Student> filteredList = studentList.filtered(student ->
+                student.getGroup() != null && student.getGroup().trim().equalsIgnoreCase(groupName.trim())
+        );
+
+        tableGroupMembers.setItems(filteredList);
+
+        System.out.println("Ieškoma grupės: [" + groupName + "], Rasta: " + filteredList.size());
+    }
+
     @FXML void onReviewClick() { hideAllPanes(); paneReview.setVisible(true); }
     @FXML void onStudentClick() { hideAllPanes(); paneStudent.setVisible(true); }
-    @FXML void onGroupsClick() { hideAllPanes(); paneGroups.setVisible(true); }
+    @FXML void onGroupsClick() { hideAllPanes(); paneGroups.setVisible(true); refreshGroups(); }
     @FXML void onAttendanceClick() { hideAllPanes(); paneAttendance.setVisible(true); }
     @FXML void onReportsClick() { hideAllPanes(); paneReports.setVisible(true); }
     @FXML void onImportExportClick() { hideAllPanes(); paneImportExport.setVisible(true); }

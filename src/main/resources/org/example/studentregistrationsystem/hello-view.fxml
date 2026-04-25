@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
@@ -12,6 +13,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -90,98 +92,110 @@
                 <AnchorPane fx:id="paneAttendance" visible="false" />
                 <AnchorPane fx:id="paneReports" visible="false" />
                 <AnchorPane fx:id="paneImportExport" visible="false" />
-                <AnchorPane fx:id="paneGroups" visible="false" />
-            <SplitPane dividerPositions="0.4286833855799373" prefHeight="160.0" prefWidth="200.0">
-              <items>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="498.0" prefWidth="244.0">
-                     <children>
-                        <VBox layoutX="18.0" layoutY="35.0" prefHeight="449.0" prefWidth="238.0">
+                <AnchorPane fx:id="paneGroups">
+               <children>
+                  <SplitPane dividerPositions="0.4286833855799373" prefHeight="502.0" prefWidth="640.0">
+                    <items>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="498.0" prefWidth="244.0">
                            <children>
-                              <TitledPane animated="false" collapsible="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="391.0" prefWidth="233.0" text="Grupės">
-                                <content>
-                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="362.0" prefWidth="237.0">
-                                       <children>
-                                          <TableView fx:id="tableGroups" layoutX="-1.0" layoutY="-1.0" prefHeight="273.0" prefWidth="235.0">
-                                            <columns>
-                                              <TableColumn fx:id="colGroupName" prefWidth="154.4932861328125" text="Grupės" />
-                                              <TableColumn prefWidth="79.0067138671875" text="Narių sk." />
-                                                <TableColumn minWidth="0.0" prefWidth="1.1033935546875" />
-                                            </columns>
-                                          </TableView>
-                                          <GridPane layoutX="15.0" layoutY="295.0" prefHeight="74.0" prefWidth="221.0">
-                                            <columnConstraints>
-                                              <ColumnConstraints />
-                                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                            </columnConstraints>
-                                            <rowConstraints>
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            </rowConstraints>
+                              <VBox layoutX="18.0" layoutY="35.0" prefHeight="449.0" prefWidth="238.0">
+                                 <children>
+                                    <TitledPane animated="false" collapsible="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="391.0" prefWidth="233.0" text="Grupės">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="362.0" prefWidth="237.0">
                                              <children>
-                                                <TextField fx:id="txtNewGroupName" prefHeight="26.0" prefWidth="102.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                <Label prefHeight="17.0" prefWidth="73.0" text="+ grupė" GridPane.columnIndex="1" />
-                                                <Button fx:id="buttonNewGroup" mnemonicParsing="false" onAction="#onAddGroupClick" prefHeight="26.0" prefWidth="90.0" text="Pridėti" GridPane.columnIndex="2" GridPane.rowIndex="1">
-                                                   <GridPane.margin>
-                                                      <Insets left="10.0" />
-                                                   </GridPane.margin>
-                                                </Button>
+                                                <TableView fx:id="tableGroups" layoutX="-1.0" layoutY="-1.0" prefHeight="273.0" prefWidth="233.0">
+                                                  <columns>
+                                                    <TableColumn fx:id="colGroupName" prefWidth="154.4932861328125" text="Grupės" />
+                                                    <TableColumn fx:id="colGroupCount" prefWidth="79.0067138671875" text="Narių sk." />
+                                                  </columns>
+                                                </TableView>
+                                                <GridPane layoutX="15.0" layoutY="295.0" prefHeight="74.0" prefWidth="221.0">
+                                                  <columnConstraints>
+                                                    <ColumnConstraints />
+                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                  </columnConstraints>
+                                                  <rowConstraints>
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                  </rowConstraints>
+                                                   <children>
+                                                      <TextField fx:id="txtNewGroupName" prefHeight="26.0" prefWidth="102.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                      <Label prefHeight="17.0" prefWidth="73.0" text="+ grupė" GridPane.columnIndex="1" />
+                                                      <Button fx:id="buttonNewGroup" mnemonicParsing="false" onAction="#onAddGroupClick" prefHeight="26.0" prefWidth="90.0" text="Pridėti" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                         <GridPane.margin>
+                                                            <Insets left="10.0" />
+                                                         </GridPane.margin>
+                                                      </Button>
+                                                   </children>
+                                                </GridPane>
                                              </children>
-                                          </GridPane>
-                                       </children>
-                                    </AnchorPane>
-                                </content>
-                              </TitledPane>
+                                          </AnchorPane>
+                                      </content>
+                                    </TitledPane>
+                                 </children>
+                              </VBox>
                            </children>
-                        </VBox>
-                     </children>
-                  </AnchorPane>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-                     <children>
-                        <VBox layoutX="22.0" layoutY="36.0" prefHeight="387.0" prefWidth="306.0">
+                        </AnchorPane>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                            <children>
-                              <TitledPane animated="false" collapsible="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="390.0" prefWidth="308.0" text="Grupės">
-                                 <content>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="233.0">
-                                       <children>
-                                          <TableView fx:id="tableGroups1" layoutX="-1.0" layoutY="-1.0" prefHeight="265.0" prefWidth="308.0">
-                                             <columns>
-                                                <TableColumn prefWidth="210.052734375" text="Vardas/Pavardė" />
-                                                <TableColumn prefWidth="96.947265625" text="Narių sk." />
-                                             </columns>
-                                          </TableView>
-                                          <GridPane layoutX="38.0" layoutY="277.0" prefHeight="74.0" prefWidth="221.0">
-                                             <columnConstraints>
-                                                <ColumnConstraints />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                             </columnConstraints>
-                                             <rowConstraints>
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                             </rowConstraints>
+                              <VBox layoutX="22.0" layoutY="36.0" prefHeight="328.0" prefWidth="310.0">
+                                 <children>
+                                    <TitledPane animated="false" collapsible="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="318.0" prefWidth="315.0" text="Grupės">
+                                       <content>
+                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="312.0" prefWidth="313.0">
                                              <children>
-                                                <TextField prefHeight="26.0" prefWidth="102.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                <Label prefHeight="17.0" prefWidth="73.0" text="- studentas" GridPane.columnIndex="1" />
-                                                <Button fx:id="buttonRemoveFromGroup" mnemonicParsing="false" onAction="#onRemoveFromGroupClick" prefHeight="26.0" prefWidth="90.0" text="Pašalinti" GridPane.columnIndex="2" GridPane.rowIndex="1">
-                                                   <GridPane.margin>
-                                                      <Insets left="10.0" />
-                                                   </GridPane.margin>
-                                                </Button>
+                                                <TableView fx:id="tableGroupMembers" layoutX="-1.0" layoutY="-1.0" prefHeight="205.0" prefWidth="315.0">
+                                                   <columns>
+                                                      <TableColumn fx:id="colMemberName" minWidth="3.07171630859375" prefWidth="188.10565185546875" text="Vardas/Pavardė" />
+                                                      <TableColumn fx:id="colMemberEmail" prefWidth="125.89434814453125" text="El. paštas" />
+                                                   </columns>
+                                                </TableView>
+                                                <GridPane layoutX="45.0" layoutY="225.0" prefHeight="74.0" prefWidth="221.0">
+                                                   <columnConstraints>
+                                                      <ColumnConstraints />
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                   </columnConstraints>
+                                                   <rowConstraints>
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                   </rowConstraints>
+                                                   <children>
+                                                      <TextField prefHeight="26.0" prefWidth="102.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                      <Label prefHeight="17.0" prefWidth="73.0" text="- studentas" GridPane.columnIndex="1" />
+                                                      <Button fx:id="buttonRemoveFromGroup" mnemonicParsing="false" onAction="#onRemoveFromGroupClick" prefHeight="26.0" prefWidth="90.0" text="Pašalinti" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                         <GridPane.margin>
+                                                            <Insets left="10.0" />
+                                                         </GridPane.margin>
+                                                      </Button>
+                                                   </children>
+                                                </GridPane>
                                              </children>
-                                          </GridPane>
-                                       </children>
-                                    </AnchorPane>
-                                 </content>
-                              </TitledPane>
+                                          </AnchorPane>
+                                       </content>
+                                    </TitledPane>
+                                 </children>
+                              </VBox>
+                              <HBox layoutX="24.0" layoutY="376.0" prefHeight="100.0" prefWidth="287.0">
+                                 <children>
+                                    <ComboBox fx:id="comboAvailableStudents" prefHeight="37.0" prefWidth="164.0" />
+                                    <Button fx:id="buttonAssignStudent" mnemonicParsing="false" onAction="#onAssignStudentClick" prefHeight="26.0" prefWidth="96.0" text="Priskirti">
+                                       <HBox.margin>
+                                          <Insets left="18.0" top="7.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                 </children>
+                              </HBox>
                            </children>
-                        </VBox>
-                     </children>
-                  </AnchorPane>
-              </items>
-            </SplitPane>
+                        </AnchorPane>
+                    </items>
+                  </SplitPane>
+               </children>
+            </AnchorPane>
             </children>
         </StackPane>
     </center>
