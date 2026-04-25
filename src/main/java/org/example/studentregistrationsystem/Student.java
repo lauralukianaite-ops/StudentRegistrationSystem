@@ -1,31 +1,31 @@
 package org.example.studentregistrationsystem;
 
-public class Student {
-    private String name;
-    private String email;
+public class Student extends Person{
     private String group;
     private String attendanceRate;
 
     public Student(String name, String email, String group, String attendanceRate) {
-        this.name = name;
-        this. email = email;
+        super(name,email);
         this.group = group;
         this.attendanceRate = attendanceRate;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
+    @Override
+    public String getRole(){
+        return "Studentas";
     }
 
     public String getGroup() {
         return group;
     }
+    public void setGroup(String group){
+        this.group = group;
+    }
 
     public String getAttendanceRate() {
         return attendanceRate;
+    }
+    public void setAttendanceRate(String attendanceRate){
+        this.attendanceRate = attendanceRate;
     }
 }
