@@ -106,27 +106,20 @@ public class HelloController {
         colMemberEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
 
         tableAttendance.setEditable(true);
-        colAttendanceCheck.setCellValueFactory(cellData -> {
-            return new javafx.beans.property.SimpleBooleanProperty(false);
-        });
-
-        colAttendanceCheck.setCellFactory(javafx.scene.control.cell.CheckBoxTableCell.forTableColumn(colAttendanceCheck));
 
         if (tableAttendance != null) {
             tableAttendance.setEditable(true);
+            colAttendanceName.setCellValueFactory(new PropertyValueFactory<>("name"));
+            colAttendanceEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+            colAttendanceCheck.setCellValueFactory(new PropertyValueFactory<>("attendingNow"));
 
-            if (colAttendanceName != null) {
-                colAttendanceName.setCellValueFactory(new PropertyValueFactory<>("name"));
-            }
-
-            if (colAttendanceEmail != null) {
-                colAttendanceEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-            }
-
-            if (colAttendanceCheck != null) {
-                colAttendanceCheck.setCellValueFactory(cellData -> new javafx.beans.property.SimpleBooleanProperty(false));
-                colAttendanceCheck.setCellFactory(javafx.scene.control.cell.CheckBoxTableCell.forTableColumn(colAttendanceCheck));
-            }
+            colAttendanceCheck.setCellFactory(column -> {
+                javafx.scene.control.cell.CheckBoxTableCell<Student, Boolean> cell = new javafx.scene.control.cell.CheckBoxTableCell<>();
+                cell.setSelectedStateCallback(index -> {
+                    return tableAttendance.getItems().get(index).attendingNowProperty();
+                });
+                return cell;
+            });
         }
 
         if (tableGroupMembers != null && buttonRemoveFromGroup != null) {
@@ -179,11 +172,8 @@ public class HelloController {
     @FXML
     void onSaveUpdateClick() {
         if (selectedStudent != null) {
-            int index = studentList.indexOf(selectedStudent);
-            Student updatedStudent = new Student(txtName.getText(), txtEmail.getText(), txtGroup.getText());
-
-            studentList.set(index, updatedStudent);
-
+            selectedStudent.setGroup(txtGroup.getText());
+            tableStudent.refresh();
             clearFields();
         }
     }
@@ -216,10 +206,16 @@ public class HelloController {
     @FXML
     void onRemoveFromGroupClick() {
         Student selectedMember = tableGroupMembers.getSelectionModel().getSelectedItem();
-        selectedMember.setGroup(null);
-        refreshGroups();
-        updateMembersTable(tableGroups.getSelectionModel().getSelectedItem());
-        tableStudent.refresh();
+        if (selectedMember != null && selectedGroupName != null) {
+            selectedMember.setGroup(null);
+            updateMembersTable(selectedGroupName);
+            tableGroups.refresh();
+            tableStudent.refresh();
+
+            ObservableList<Student> freeStudents = studentList.filtered(s -> s.getGroup() == null || s.getGroup().isEmpty());
+            comboAvailableStudents.setItems(freeStudents);
+            buttonRemoveFromGroup.setVisible(false);
+        }
     }
 
     private void refreshGroupMembers() {
@@ -282,7 +278,8 @@ public class HelloController {
             return;
         }
         for (Student s : tableAttendance.getItems()) {
-            s.addAttendance(true);
+            s.addAttendance(s.isAttendingNow());
+            s.setAttendingNow(false);
         }
 
         tableStudent.refresh();
