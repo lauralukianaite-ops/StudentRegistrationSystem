@@ -223,6 +223,8 @@ public class HelloController {
         tableGroupMembers.setItems(members);
 
         ObservableList<Student> freeStudents = studentList.filtered(s -> s.getGroup() == null || s.getGroup().isEmpty());
+
+        comboAvailableStudents.setItems(null);
         comboAvailableStudents.setItems(freeStudents);
     }
 
@@ -233,8 +235,14 @@ public class HelloController {
         if (studentToAssign != null && selectedGroupName != null) {
             studentToAssign.setGroup(selectedGroupName);
 
+            updateMembersTable(selectedGroupName);
+
+            comboAvailableStudents.getSelectionModel().clearSelection();
+
             refreshGroupMembers();
+            tableGroups.refresh();
             tableStudent.refresh();
+
         }
     }
 

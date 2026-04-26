@@ -48,4 +48,9 @@ public class Student extends Person{
     public void setAttendingNow(boolean attendingNow){
         this.attendingNow.set(attendingNow);
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }
