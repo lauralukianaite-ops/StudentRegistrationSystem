@@ -6,6 +6,19 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
+
+import java.io.*;
+import java.time.LocalDate;
+import java.util.Map;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class HelloController {
     @FXML private TableView<Student> tableStudent;
@@ -50,17 +63,23 @@ public class HelloController {
     @FXML private TableColumn<Student, String> colAttendanceName;
     @FXML private TableView<Student> tableAttendance;
     @FXML private ComboBox<String> comboAttendanceGroup;
-    @FXML private DatePicker datePicker;
+    @FXML private DatePicker datePickerAttendance;
 
     @FXML private Button buttonRemoveFromGroup;
     @FXML private Label labelRemoveFromGroup;
+
+    @FXML private DatePicker dateFrom;
+    @FXML private DatePicker dateTo;
 
     @FXML
     public void initialize() {
         colName.setCellValueFactory(new PropertyValueFactory<>("name"));
         colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
         colGroup.setCellValueFactory(new PropertyValueFactory<>("group"));
-        colAttendance.setCellValueFactory(new PropertyValueFactory<>("attendanceRate"));
+        colAttendance.setCellValueFactory(data -> {
+            double percentage = data.getValue().calculateAttendancePercentage();
+            return new javafx.beans.property.SimpleStringProperty(String.format("%.1f%%", percentage));
+        });
 
         studentList.add(new Student("Pavyzdys Pavyzdinis", "pavyzdys@stud.lt", "GR-1"));
         studentList.add(new Student("Pavyzdė Pavyzdienytė", "pavyzdyspavpav@stud.lt", "GR-2"));
@@ -280,18 +299,110 @@ public class HelloController {
     }
 
     @FXML
+    void onDateChanged() {
+        LocalDate selectedDate = datePickerAttendance.getValue();
+        if (selectedDate != null && tableAttendance.getItems() != null) {
+            for (Student s : tableAttendance.getItems()) {
+                s.setAttendingNow(s.wasPresent(selectedDate));
+            }
+            tableAttendance.refresh();
+        }
+    }
+
+    @FXML
     void onSaveAttendanceClick() {
-        if (datePicker.getValue() == null) {
+        LocalDate selectedDate = datePickerAttendance.getValue();
+        if (selectedDate == null) {
             System.out.println("Pirmiausia pasirinkite datą!");
             return;
         }
         for (Student s : tableAttendance.getItems()) {
-            s.addAttendance(s.isAttendingNow());
-            s.setAttendingNow(false);
+            boolean isPresent = s.isAttendingNow();
+            s.markAttendance(selectedDate, isPresent);
         }
 
         tableStudent.refresh();
         tableAttendance.refresh();
+    }
+
+    @FXML
+    void onGeneratePDFReport() {
+        LocalDate from = dateFrom.getValue();
+        LocalDate to = dateTo.getValue();
+
+        if (from == null || to == null) return;
+
+        FileChooser fc = new FileChooser();
+        fc.setInitialFileName("Lankomumo_Ataskaita.pdf");
+        File file = fc.showSaveDialog(paneReports.getScene().getWindow());
+
+        if (file != null) {
+            try {
+                Document document = new Document();
+                PdfWriter.getInstance(document, new FileOutputStream(file));
+                document.open();
+
+                document.add(new Paragraph("Lankomumo ataskaita nuo " + from + " iki " + to));
+                document.add(new Paragraph("--------------------------------------------------"));
+
+                for (Student s : studentList) {
+                    long count = s.getAttendanceRecord().entrySet().stream()
+                            .filter(e -> !e.getKey().isBefore(from) && !e.getKey().isAfter(to))
+                            .filter(Map.Entry::getValue)
+                            .count();
+                    document.add(new Paragraph(s.getName() + " [" + s.getGroup() + "]: " + count + " lankyti kartai"));
+                }
+
+                document.close();
+                System.out.println("PDF sukurtas!");
+            } catch (Exception e) { e.printStackTrace(); }
+        }
+    }
+
+    @FXML
+    void onExportExcel() {
+        saveFile(new ExcelExporter(), "Excel failas", "*.xlsx");
+    }
+
+    @FXML
+    void onExportCSV() {
+        saveFile(new CsvExporter(), "CSV failas", "*.csv");
+    }
+
+    private void saveFile(DataExportable exporter, String desc, String ext) {
+        FileChooser fc = new FileChooser();
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter(desc, ext));
+        File file = fc.showSaveDialog(paneImportExport.getScene().getWindow());
+
+        if (file != null) {
+            try {
+                exporter.exportData(studentList, file.getAbsolutePath());
+                System.out.println("Eksportas sėkmingas!");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @FXML
+    void onImportCSV() {
+        FileChooser fc = new FileChooser();
+        File file = fc.showOpenDialog(paneImportExport.getScene().getWindow());
+
+        if (file != null) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                studentList.clear();
+                String line;
+                reader.readLine();
+                while ((line = reader.readLine()) != null) {
+                    String[] data = line.split(";");
+                    if (data.length >= 3) {
+                        studentList.add(new Student(data[0], data[1], data[2]));
+                    }
+                }
+                tableStudent.refresh();
+            } catch (IOException e) { e.printStackTrace(); }
+        }
     }
 
     @FXML void onReviewClick() { hideAllPanes(); paneReview.setVisible(true); }
